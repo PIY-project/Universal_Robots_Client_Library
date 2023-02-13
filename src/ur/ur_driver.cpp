@@ -233,6 +233,11 @@ bool UrDriver::writeTrajectoryControlMessage(const control::TrajectoryControlMes
   return reverse_interface_->writeTrajectoryControlMessage(trajectory_action, point_number);
 }
 
+bool UrDriver::writeFreedriveControlMessage(const control::FreedriveControlMessage freedrive_action)
+{
+  return reverse_interface_->writeFreedriveControlMessage(freedrive_action);
+}
+
 bool UrDriver::zeroFTSensor()
 {
   if (getVersion().major < 5)

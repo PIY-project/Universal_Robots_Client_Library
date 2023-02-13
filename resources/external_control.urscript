@@ -21,6 +21,7 @@ MODE_SPEEDJ = 2
 MODE_FORWARD = 3
 MODE_SPEEDL = 4
 MODE_POSE = 5
+MODE_FREEDRIVE = 6
 
 TRAJECTORY_MODE_RECEIVE = 1
 TRAJECTORY_MODE_CANCEL = -1
@@ -37,6 +38,9 @@ ZERO_FTSENSOR = 0
 SET_PAYLOAD = 1
 SET_TOOL_VOLTAGE = 2
 SCRIPT_COMMAND_DATA_DIMENSION = 5
+
+FREEDRIVE_MODE_START = 1
+FREEDRIVE_MODE_STOP = -1
 
 #Global variables are also showed in the Teach pendants variable list
 global cmd_servo_state = SERVO_UNINITIALIZED
@@ -265,6 +269,9 @@ while keepalive > 0 and control_mode > MODE_STOPPED:
       if control_mode == MODE_FORWARD:
         kill thread_trajectory
         clear_remaining_trajectory_points()
+      # Stop freedrive
+      elif control_mode == MODE_FREEDRIVE:
+        end_freedrive_mode()
       end
       control_mode = params_mult[8]
       join thread_move
@@ -304,6 +311,12 @@ while keepalive > 0 and control_mode > MODE_STOPPED:
     elif control_mode == MODE_POSE:
       pose = p[params_mult[2] / MULT_jointstate, params_mult[3] / MULT_jointstate, params_mult[4] / MULT_jointstate, params_mult[5] / MULT_jointstate, params_mult[6] / MULT_jointstate, params_mult[7] / MULT_jointstate]
       set_servo_pose(pose)
+    elif control_mode == MODE_FREEDRIVE:
+      if params_mult[2] == FREEDRIVE_MODE_START:
+        freedrive_mode()
+      elif params_mult[2] == FREEDRIVE_MODE_STOP:
+        end_freedrive_mode()
+      end
     end
   else:
     keepalive = keepalive - 1

@@ -223,6 +223,15 @@ public:
                                      const int point_number = 0);
 
   /*!
+   * \brief Writes a control message in freedrive mode.
+   *
+   * \param freedrive_action The action to be taken, such as starting or stopping freedrive
+   *
+   * \returns True on successful write.
+   */
+  bool writeFreedriveControlMessage(const control::FreedriveControlMessage freedrive_action);
+
+  /*!
    * \brief Zero the force torque sensor (only availbe on e-Series). Note:  It requires the external control script to
    * be running or the robot to be in headless mode
    *

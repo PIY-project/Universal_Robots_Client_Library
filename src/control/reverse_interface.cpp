@@ -114,6 +114,38 @@ bool ReverseInterface::writeTrajectoryControlMessage(const TrajectoryControlMess
   return server_.write(client_fd_, buffer, sizeof(buffer), written);
 }
 
+bool ReverseInterface::writeFreedriveControlMessage(const FreedriveControlMessage freedrive_action)
+{
+  const int message_length = 2;
+  if (client_fd_ == -1)
+  {
+    return false;
+  }
+  uint8_t buffer[sizeof(int32_t) * 8];
+  uint8_t* b_pos = buffer;
+
+  // The first element is always the keepalive signal.
+  int32_t val = htobe32(keepalive_count_);
+  b_pos += append(b_pos, val);
+
+  val = htobe32(toUnderlying(freedrive_action));
+  b_pos += append(b_pos, val);
+
+  // writing zeros to allow usage with other script commands
+  for (size_t i = message_length; i < 8 - 1; i++)
+  {
+    val = htobe32(0);
+    b_pos += append(b_pos, val);
+  }
+
+  val = htobe32(toUnderlying(comm::ControlMode::MODE_FREEDRIVE));
+  b_pos += append(b_pos, val);
+
+  size_t written;
+
+  return server_.write(client_fd_, buffer, sizeof(buffer), written);
+}
+
 void ReverseInterface::connectionCallback(const int filedescriptor)
 {
   if (client_fd_ < 0)
