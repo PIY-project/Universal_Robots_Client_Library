@@ -44,6 +44,22 @@ if (INTEGRATION_TESTS)
   target_link_libraries(dashboard_client_tests PRIVATE ur_client_library::urcl ${GTEST_LIBRARIES})
   gtest_add_tests(TARGET      dashboard_client_tests
   )
+
+  add_executable(spline_tests test_spline_interpolation.cpp)
+  target_compile_options(spline_tests PRIVATE ${CXX17_FLAG})
+  target_include_directories(spline_tests PRIVATE ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(spline_tests PRIVATE ur_client_library::urcl ${GTEST_LIBRARIES})
+  gtest_add_tests(TARGET      spline_tests
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
+  add_executable(ur_driver_tests test_ur_driver.cpp)
+  target_compile_options(ur_driver_tests PRIVATE ${CXX17_FLAG})
+  target_include_directories(ur_driver_tests PRIVATE ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(ur_driver_tests PRIVATE ur_client_library::urcl ${GTEST_LIBRARIES})
+  gtest_add_tests(TARGET      ur_driver_tests
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
 else()
   message(STATUS "Skipping integration tests.")
 endif()
@@ -194,4 +210,25 @@ target_compile_options(pipeline_tests PRIVATE ${CXX17_FLAG})
 target_include_directories(pipeline_tests PRIVATE ${GTEST_INCLUDE_DIRS})
 target_link_libraries(pipeline_tests PRIVATE ur_client_library::urcl ${GTEST_LIBRARIES})
 gtest_add_tests(TARGET pipeline_tests
+)
+
+add_executable(script_command_interface_tests test_script_command_interface.cpp)
+target_compile_options(script_command_interface_tests PRIVATE ${CXX17_FLAG})
+target_include_directories(script_command_interface_tests PRIVATE ${GTEST_INCLUDE_DIRS})
+target_link_libraries(script_command_interface_tests PRIVATE ur_client_library::urcl ${GTEST_LIBRARIES})
+gtest_add_tests(TARGET script_command_interface_tests
+)
+
+add_executable(robot_receive_timeout_tests test_robot_receive_timeout.cpp)
+target_compile_options(robot_receive_timeout_tests PRIVATE ${CXX17_FLAG})
+target_include_directories(robot_receive_timeout_tests PRIVATE ${GTEST_INCLUDE_DIRS})
+target_link_libraries(robot_receive_timeout_tests PRIVATE ur_client_library::urcl ${GTEST_LIBRARIES})
+gtest_add_tests(TARGET robot_receive_timeout_tests
+)
+
+add_executable(control_mode_tests test_control_mode.cpp)
+target_compile_options(control_mode_tests PRIVATE ${CXX17_FLAG})
+target_include_directories(control_mode_tests PRIVATE ${GTEST_INCLUDE_DIRS})
+target_link_libraries(control_mode_tests PRIVATE ur_client_library::urcl ${GTEST_LIBRARIES})
+gtest_add_tests(TARGET control_mode_tests
 )
