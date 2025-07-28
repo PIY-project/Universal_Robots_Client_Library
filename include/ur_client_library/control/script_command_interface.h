@@ -157,6 +157,14 @@ public:
   bool endToolContact();
 
   /*!
+   * \brief Set the tcp offset
+   * \param pose TCP offset from robot flange
+   * 
+   * \returns True, if the write was performed successfully, false otherwise.
+   */
+  bool setTcp(const vector6d_t* pose);
+
+  /*!
    * \brief  Returns whether a client/robot is connected to this server.
    *
    */
@@ -193,6 +201,7 @@ private:
     END_FORCE_MODE = 4,      ///< End force mode
     START_TOOL_CONTACT = 5,  ///< Start detecting tool contact
     END_TOOL_CONTACT = 6,    ///< End detecting tool contact
+    SET_TCP = 7,             ///< Set tcp
   };
 
   bool client_connected_;

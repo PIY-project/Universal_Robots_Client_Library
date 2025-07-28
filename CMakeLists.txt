@@ -93,16 +93,6 @@ if(CMAKE_THREAD_LIBS_INIT)
   target_link_libraries(urcl PUBLIC "${CMAKE_THREAD_LIBS_INIT}")
 endif()
 
-##
-## Build testing if enabled by option
-##
-if (BUILDING_TESTS)
-  enable_testing()
-  add_subdirectory(tests)
-else()
-  message(STATUS "Building tests disabled.")
-endif()
-
 
 add_subdirectory(examples)
 

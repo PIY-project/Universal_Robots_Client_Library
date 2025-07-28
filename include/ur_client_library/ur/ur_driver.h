@@ -716,6 +716,16 @@ public:
   bool endToolContact();
 
   /*!
+   * \brief Set the tcp offset. Note: It requires the external control script to be running or
+   * the robot to be in headless mode.
+   *
+   * \param pose tcp offset from robot flange
+   *
+   * \returns True on successful write.
+   */
+  bool setTcp(const vector6d_t& pose);
+
+  /*!
    * \brief Write a keepalive signal only.
    *
    * This signals the robot that the connection is still
