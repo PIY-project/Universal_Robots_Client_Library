@@ -612,6 +612,22 @@ public:
                                const RobotReceiveTimeout& robot_receive_timeout = RobotReceiveTimeout::millisec(200));
 
   /*!
+   * \brief Writes a control message in freedrive mode.
+   *
+   * \param freedrive_action The action to be taken, such as starting or stopping freedrive
+   * \param params The params for freedrive
+   * \param robot_receive_timeout The read timeout configuration for the reverse socket running in the external
+   * control script on the robot. If you want to make the read function blocking then use RobotReceiveTimeout::off()
+   * function to create the RobotReceiveTimeout object
+   *
+   * \returns True on successful write.
+   */
+  bool
+  writeFreedriveControlMessage(const control::FreedriveControlMessage freedrive_action,
+                               const control::FreedriveParams& params,
+                               const RobotReceiveTimeout& robot_receive_timeout = RobotReceiveTimeout::millisec(200));
+
+  /*!
    * \brief Zero the force torque sensor (only availbe on e-Series). Note:  It requires the external control script to
    * be running or the robot to be in headless mode
    *

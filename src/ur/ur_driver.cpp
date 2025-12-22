@@ -277,6 +277,13 @@ bool UrDriver::writeFreedriveControlMessage(const control::FreedriveControlMessa
   return reverse_interface_->writeFreedriveControlMessage(freedrive_action, robot_receive_timeout);
 }
 
+bool UrDriver::writeFreedriveControlMessage(const control::FreedriveControlMessage freedrive_action,
+                                            const control::FreedriveParams& params,
+                                            const RobotReceiveTimeout& robot_receive_timeout)
+{
+  return reverse_interface_->writeFreedriveControlMessage(freedrive_action, params, robot_receive_timeout);
+}
+
 bool UrDriver::zeroFTSensor()
 {
   if (getVersion().major < 5)

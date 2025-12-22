@@ -171,7 +171,7 @@ bool ReverseInterface::writeTrajectoryControlMessage(const TrajectoryControlMess
 bool ReverseInterface::writeFreedriveControlMessage(const FreedriveControlMessage freedrive_action,
                                                     const RobotReceiveTimeout& robot_receive_timeout)
 {
-  const int message_length = 2;
+  const int message_length = 3;
   if (client_fd_ == INVALID_SOCKET)
   {
     return false;
@@ -195,6 +195,77 @@ bool ReverseInterface::writeFreedriveControlMessage(const FreedriveControlMessag
   b_pos += append(b_pos, val);
 
   val = htobe32(toUnderlying(freedrive_action));
+  b_pos += append(b_pos, val);
+
+  // Signal to the script that params are NOT available
+  val = 0;
+  val = htobe32(val);
+  b_pos += append(b_pos, val);
+
+  // writing zeros to allow usage with other script commands
+  for (size_t i = message_length; i < MAX_MESSAGE_LENGTH - 1; i++)
+  {
+    val = htobe32(0);
+    b_pos += append(b_pos, val);
+  }
+
+  val = htobe32(toUnderlying(comm::ControlMode::MODE_FREEDRIVE));
+  b_pos += append(b_pos, val);
+
+  size_t written;
+
+  return server_.write(client_fd_, buffer, sizeof(buffer), written);
+}
+
+bool ReverseInterface::writeFreedriveControlMessage(const FreedriveControlMessage freedrive_action,
+                                                    const FreedriveParams& params,
+                                                    const RobotReceiveTimeout& robot_receive_timeout)
+{
+  const int message_length = 10;
+  if (client_fd_ == INVALID_SOCKET)
+  {
+    return false;
+  }
+  uint8_t buffer[sizeof(int32_t) * MAX_MESSAGE_LENGTH];
+  uint8_t* b_pos = buffer;
+
+  int read_timeout = robot_receive_timeout.verifyRobotReceiveTimeout(comm::ControlMode::MODE_FREEDRIVE, step_time_);
+
+  // This can be removed once we remove the setkeepAliveCount() method
+  auto read_timeout_resolved = read_timeout;
+  if (keep_alive_count_modified_deprecated_)
+  {
+    // Translate keep alive count into read timeout. 20 milliseconds was the "old read timeout"
+    read_timeout_resolved = 20 * keepalive_count_;
+  }
+
+  int32_t val_1 = htobe32(1);
+  int32_t val_0 = htobe32(0);
+
+  // The first element is always the read timeout.
+  int32_t val = read_timeout_resolved;
+  val = htobe32(val);
+  b_pos += append(b_pos, val);
+
+  val = htobe32(toUnderlying(freedrive_action));
+  b_pos += append(b_pos, val);
+
+  // Signal to the script that params are available
+  b_pos += append(b_pos, val_1);
+
+  b_pos += append(b_pos, (params.lock_x ? val_0 : val_1));
+
+  b_pos += append(b_pos, (params.lock_y ? val_0 : val_1));
+
+  b_pos += append(b_pos, (params.lock_z ? val_0 : val_1));
+
+  b_pos += append(b_pos, (params.lock_rx ? val_0 : val_1));
+
+  b_pos += append(b_pos, (params.lock_ry ? val_0 : val_1));
+
+  b_pos += append(b_pos, (params.lock_rz ? val_0 : val_1));
+
+  val = htobe32(toUnderlying(params.ref_frame));
   b_pos += append(b_pos, val);
 
   // writing zeros to allow usage with other script commands
