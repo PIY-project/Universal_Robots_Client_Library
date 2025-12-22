@@ -28,7 +28,7 @@ MODE_POSE = 5
 MODE_FREEDRIVE = 6
 MODE_TOOL_IN_CONTACT = 7
 # Data dimensions of the message received on the reverse interface
-REVERSE_INTERFACE_DATA_DIMENSION = 8
+REVERSE_INTERFACE_DATA_DIMENSION = 11
 
 TRAJECTORY_MODE_RECEIVE = 1
 TRAJECTORY_MODE_CANCEL = -1
@@ -852,8 +852,24 @@ while control_mode > MODE_STOPPED:
       set_servo_setpoint(get_inverse_kin(pose, cmd_servo_q))
     elif control_mode == MODE_FREEDRIVE:
       if params_mult[2] == FREEDRIVE_MODE_START:
+        textmsg(params_mult)
         textmsg("Entering freedrive mode")
-        freedrive_mode()
+        if params_mult[3] == 1:
+          textmsg("Using parameter freedrive")
+
+          free_axes = [params_mult[4], params_mult[5], params_mult[6], params_mult[7], params_mult[8], params_mult[9]]
+
+          if params_mult[10] == 0:
+            textmsg("Frame: 'base' | Free axes: ", free_axes)
+            freedrive_mode(free_axes, "base")
+          elif params_mult[10] == 1:
+            textmsg("Frame: 'tool' | Free axes: ", free_axes)
+            freedrive_mode(free_axes, "tool")
+          end
+        else:
+          textmsg("Using default freedrive")
+          freedrive_mode()
+        end
       elif params_mult[2] == FREEDRIVE_MODE_STOP:
         textmsg("Leaving freedrive mode")
         end_freedrive_mode()

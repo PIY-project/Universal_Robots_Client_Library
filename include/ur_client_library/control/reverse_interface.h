@@ -63,6 +63,31 @@ enum class FreedriveControlMessage : int32_t
   FREEDRIVE_START = 1,  ///< Represents command to start freedrive mode.
 };
 
+enum class FreedriveReferenceFrame : int32_t
+{
+  BASE = 0, ///< Use the robot base frame as the reference frame
+  TOOL = 1, ///< Use the robot ee frame as the reference frame
+};
+
+enum class FreedriveMode : int32_t
+{
+  JOINTS = 0,     ///< Represents free movement. Each joint can be moved indipendently. NOTE: Axis locks are ignored
+  CARTESIAN = 1,  ///< Represents a cartesian movement. The tcp translates in the reference frame
+  REORIENT = 2,   ///< Representa a rotation movement. The robot rotates aroud the tcp frame
+};
+
+struct FreedriveParams
+{
+  bool lock_x = false;    ///< Lock x axis
+  bool lock_y = false;    ///< Lock y axis
+  bool lock_z = false;    ///< Lock z axis
+  bool lock_rx = false;   ///< Lock rx axis
+  bool lock_ry = false;   ///< Lock ry axis
+  bool lock_rz = false;   ///< Lock rz axis
+  FreedriveReferenceFrame ref_frame = FreedriveReferenceFrame::BASE;  ///< Reference frame
+  FreedriveMode mode = FreedriveMode::JOINTS;                         ///< Freedrive mode
+};
+
 struct ReverseInterfaceConfig
 {
   uint32_t port = 50001;  //!< Port the server is started on
@@ -148,6 +173,21 @@ public:
                                const RobotReceiveTimeout& robot_receive_timeout = RobotReceiveTimeout::millisec(200));
 
   /*!
+   * \brief Writes needed information to the robot to be read by the URScript program.
+   *
+   * \param freedrive_action 1 if freedrive mode is to be started, -1 if it should be stopped and 0 to keep it running
+   * \param params The params for freedrive
+   * \param robot_receive_timeout The read timeout configuration for the reverse socket running in the external
+   * control script on the robot. If you want to make the read function blocking then use RobotReceiveTimeout::off()
+   * function to create the RobotReceiveTimeout object
+   *
+   * \returns True, if the write was performed successfully, false otherwise.
+   */
+  bool
+  writeFreedriveControlMessage(const FreedriveControlMessage freedrive_action, const FreedriveParams& params,
+                               const RobotReceiveTimeout& robot_receive_timeout = RobotReceiveTimeout::millisec(200));
+
+  /*!
    * \brief Set the Keepalive count. This will set the number of allowed timeout reads on the robot.
    *
    * \param count Number of allowed timeout reads on the robot.
@@ -192,7 +232,7 @@ protected:
     return s;
   }
 
-  static const int MAX_MESSAGE_LENGTH = 8;
+  static const int MAX_MESSAGE_LENGTH = 11;
 
   std::function<void(bool)> handle_program_state_;
   std::chrono::milliseconds step_time_;
