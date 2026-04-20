@@ -231,7 +231,7 @@ bool ScriptCommandInterface::endToolContact()
 
 bool ScriptCommandInterface::setTcp(const vector6d_t* pose)
 {
-  const int message_length = 6;
+  const int message_length = 7;
   uint8_t buffer[sizeof(int32_t) * MAX_MESSAGE_LENGTH];
   uint8_t* b_pos = buffer;
   int32_t val = htobe32(toUnderlying(ScriptCommand::SET_TCP));
