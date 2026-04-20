@@ -146,7 +146,7 @@ public:
    *
    * \returns True, if the write was performed successfully, false otherwise.
    */
-  bool startToolContact();
+  bool startToolContact(const float force_threshold = 0.0);
 
   /*!
    * \brief This will stop the robot from looking for a tool contact, it will also enable sending move commands to the

@@ -186,13 +186,16 @@ bool ScriptCommandInterface::endForceMode()
   return server_.write(client_fd_, buffer, sizeof(buffer), written);
 }
 
-bool ScriptCommandInterface::startToolContact()
+bool ScriptCommandInterface::startToolContact(const float force_threshold)
 {
-  const int message_length = 1;
+  const int message_length = 2;
   uint8_t buffer[sizeof(int32_t) * MAX_MESSAGE_LENGTH];
   uint8_t* b_pos = buffer;
 
   int32_t val = htobe32(toUnderlying(ScriptCommand::START_TOOL_CONTACT));
+  b_pos += append(b_pos, val);
+
+  val = htobe32(static_cast<int32_t>(round(force_threshold * MULT_JOINTSTATE)));
   b_pos += append(b_pos, val);
 
   // writing zeros to allow usage with other script commands
