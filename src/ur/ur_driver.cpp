@@ -534,7 +534,7 @@ bool UrDriver::endForceMode()
   }
 }
 
-bool UrDriver::startToolContact()
+bool UrDriver::startToolContact(const float force_threshold)
 {
   if (getVersion().major < 5)
   {
@@ -548,7 +548,7 @@ bool UrDriver::startToolContact()
 
   if (script_command_interface_->clientConnected())
   {
-    return script_command_interface_->startToolContact();
+    return script_command_interface_->startToolContact(force_threshold);
   }
   else
   {
